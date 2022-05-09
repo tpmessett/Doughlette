@@ -10,9 +10,9 @@ import { gql } from "@apollo/client/core"
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
-  uri: 'https://partner.api.slerp.com/v1/graphql',
+  uri: '',
   headers: {
-  authorization: 'Bearer ' + process.env.VUE_APP_KEY,
+  authorization: 'Bearer ' + process.env.APi_KEY,
 
     }
   });
@@ -26,4 +26,32 @@ const apolloClient = new ApolloClient({
   cache,
 })
 
-createApp(App).mount('#app')
+provideApolloClient(apolloClient)
+
+const store = createStore({
+  state () {
+    return {
+      products: {}
+    }
+  },
+  actions: {
+    setOrder (state: any, location: string) {
+      const ORDER = gql `
+        query {
+
+        }
+      `
+
+      const { onResult } = useQuery(ORDER)
+      onResult(({ data }) => {
+        state.result = data
+        console.log(state.products)
+    })
+   }
+  }
+ })
+
+createApp(App).provide(DefaultApolloClient, apolloClient).use(store).mount('#app')
+
+
+
