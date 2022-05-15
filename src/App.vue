@@ -1,69 +1,105 @@
 <template>
-  <img class="logo-image" :class="{ rotate: rotating === true }" alt="Crosstown logo" src="./assets/logo.png">
-  <h1>Ready to play Doughlette?</h1>
-  <p>With risk comes reward... Click below to spin the doughnut of fortune for a mystery doughnut at a discounted price... You'll get at least 50% off, but you don't get to choose your flavour... Cinamon, Chocolate, Jam, Lime, even Matcha, it could be anything.</p>
-  <p>Of course, if the risk of a rogue flavour is too much for your taste buds you can always <a href="https://crosstown.slerp.com">wuss out</a> and order on our website</p>
-  <div class="button-container">
-    <div @click='rotates' class='button'>PLAY DOUGHLETTE</div>
-  </div>
-  <div class="button-container">
-    <a class='button-reverse' href="https://crosstown.slerp.com">Nope, let me choose!</a>
+    <img class="logo-image" alt="logo" src="./assets/logo.png">
+  <div id="content">
+    <h1 v-if="result">{{result.store_variants[0].product_variant.name}}</h1>
+    <h3 v-if="result">Date: {{result.store_variants[0].product_variant.product.category.special_availabilities[0].start_date}}</h3>
+    <p v-if="result">{{result.store_variants[0].product_variant.product.description}}</p>
+    <div>
+      <div class="tickets">
+        <div>
+          Number of Tickets:
+        </div>
+        <div>
+          <div></div>
+          <div>{{number}}</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="button-container">
+      <div class='button'>BOOK NOW</div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { ref } from 'vue'
+import { useQuery } from "@vue/apollo-composable";
+import { gql } from "@apollo/client/core"
 
 export default {
   setup(){
-    const rotating = ref(false)
-    const rotates = () => {
-      rotating.value = true
-
+    const getSku = () => {
+      const url = window.location.pathname
+      return url.slice(1)
     }
+    const sku = getSku()
+    const store = process.env.VUE_APP_STORE
+    const PRODUCT_QUERY = gql`
+      query getBySku {
+        store_variants(where: {product_variant: {sku: {_eq: "${sku}"}}, store: {slug: {_eq: "${store}"}}}) {
+          variant_id
+          in_stock
+          stock_count
+          stock_sold
+          product_variant {
+            image
+            name
+            price
+            product {
+              description
+              category {
+                special_availabilities
+              }
+            }
+          }
+        }
+      }
+    `
+    const { result, error } = useQuery(PRODUCT_QUERY)
+    const number = ref(1)
     return {
-      rotating,
-      rotates
+      sku,
+      result,
+      error,
+      number
     }
   }
 }
 </script>
 
 <style>
-
-.rotate {
-  animation: rotation 8s linear;
-}
-
-@keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
-}
+@import url('https://fonts.googleapis.com/css2?family=Gelasio&display=swap');
 
 body {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Gelasio, Helvetica, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #fff;
+  color: #424325;
   height: 100vh;
-  background-color: black;
+  background-color: #e6e6e6;
   margin: 0;
+  letter-spacing: 2px;
+}
+
+.tickets {
+  display:  flex;
+  justify-content:  space-around;
 }
 
 #app {
   height: 100vh;
+}
+
+#content {
   padding-left: 16px;
   padding-right: 16px;
 }
 
 .logo-image {
   width: 200px;
-  margin: 48px;
+  margin: 48px 48px 16px 48px;
 }
 
 h1 {
@@ -72,34 +108,34 @@ h1 {
 }
 
 .button {
-  color: black;
-  background-color: white;
+  color: #D09D70;
+  background-color: #e6e6e6;
   padding: 12px;
   width: 50%;
   margin-top: 40px;
-  border: 2px solid white;
+  border: 2px solid #D09D70;
 }
 
 .button:hover {
-  color: white;
-  background-color: black;
+  color: #e6e6e6;
+  background-color: #D09D70;
 
 }
 
 .button-reverse {
-  color: white;
-  background-color: black;
+  color: #e6e6e6;
+  background-color: #D09D70;
   padding: 12px;
   width: 50%;
   margin-top: 40px;
-  border: 2px solid white;
+  border: 2px solid #e6e6e6;
   text-decoration: none;
 }
 
 
 .button-reverse:hover {
-  color: black;
-  background-color: white;
+  color: #D09D70;
+  background-color: #e6e6e6;
 
 }
 .button-container {
