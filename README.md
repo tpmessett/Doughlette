@@ -1,4 +1,4 @@
-# doughlette
+# Event-buyer
 
 ## Project setup
 ```
