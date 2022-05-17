@@ -13,6 +13,7 @@
     "@vue/apollo-option": "^4.0.0-alpha.17",
     "core-js": "^3.6.5",
     "graphql": "^16.5.0",
+    "primeicons": "^5.0.0",
     "vue": "^3.0.0",
     "vue-apollo": "^3.1.0",
     "vue-class-component": "^8.0.0-0",

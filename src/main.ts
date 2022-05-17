@@ -1,3 +1,4 @@
+
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
 import App from './App.vue'
@@ -7,6 +8,8 @@ import { DefaultApolloClient } from '@vue/apollo-composable'
 import { provideApolloClient } from '@vue/apollo-composable'
 import { useQuery } from "@vue/apollo-composable";
 import { gql } from "@apollo/client/core"
+import Vue from 'vue'
+import 'primeicons/primeicons.css';
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
